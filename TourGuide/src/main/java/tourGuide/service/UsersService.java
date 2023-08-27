@@ -20,6 +20,8 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.dto.AllCurrentLocationsDTO;
+import tourGuide.dto.NearbyAttractionsDTO;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -58,6 +60,8 @@ public class UsersService {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
 			user.getLastVisitedLocation() :
 			trackUserLocation(user);
+
+		//TODO: séparer
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
@@ -83,6 +87,21 @@ public class UsersService {
 		//TODO: séparer
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
+	}
+
+	public List<AllCurrentLocationsDTO> getAllUsersLocations() {
+		List<User> users = getAllUsers();
+
+		List<AllCurrentLocationsDTO> allCurrentLocationsDTOS = new ArrayList<AllCurrentLocationsDTO>();
+		for (int i=0; i < users.size(); i++){
+			AllCurrentLocationsDTO allCurrentLocationsDTO = new AllCurrentLocationsDTO();
+			allCurrentLocationsDTO.setUserID(users.get(i).getUserId());
+			allCurrentLocationsDTO.setLocation(users.get(i).getLastVisitedLocation().location);
+
+			allCurrentLocationsDTOS.add(allCurrentLocationsDTO);
+		}
+
+		return allCurrentLocationsDTOS;
 	}
 
 
@@ -138,5 +157,4 @@ public class UsersService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-	
 }

@@ -1,16 +1,6 @@
 package tourGuide.dto;
 
-import gpsUtil.location.Attraction;
-
-import java.util.ArrayList;
-
 public class NearbyAttractionsDTO {
-
-    // Name of Tourist attraction,
-    // Tourist attractions lat/long,
-    // The user's location lat/long,
-    // The distance in miles between the user's location and each of the attractions.
-    // The reward points for visiting each Attraction.
 
     private String name;
     private double attractionLongitude;
