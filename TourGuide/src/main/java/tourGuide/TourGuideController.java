@@ -1,9 +1,7 @@
 package tourGuide;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +15,7 @@ import tourGuide.service.RewardsService;
 import tourGuide.service.TripDealsService;
 import tourGuide.service.UsersService;
 import tourGuide.user.User;
+import tourGuide.user.UserReward;
 import tripPricer.Provider;
 
 @RestController
@@ -36,48 +35,39 @@ public class TourGuideController {
     public String index() {
         return "Greetings from TourGuide!";
     }
-    
-    @RequestMapping("/getLocation") 
-    public String getLocation(@RequestParam String userName) {
-    	VisitedLocation visitedLocation = usersService.getUserLocation(getUser(userName));
-		return JsonStream.serialize(visitedLocation.location);
+
+    @RequestMapping("/getLocation")
+    public VisitedLocation getLocation(@RequestParam String userName) {
+        VisitedLocation visitedLocation = usersService.getUserLocation(getUser(userName));
+        return visitedLocation;
     }
 
-    @RequestMapping("/getNearbyAttractions") 
+    @RequestMapping("/getNearbyAttractions")
     public List<NearbyAttractionsDTO> getNearbyAttractions(@RequestParam String userName) {
         List<NearbyAttractionsDTO> nearbyAttractionsDTO = rewardsService.get5NearestAttractions(usersService.getUserLocation(usersService.getUser(userName)).location);
-    	return nearbyAttractionsDTO;
-    }
-    
-    @RequestMapping("/getRewards") 
-    public String getRewards(@RequestParam String userName) {
-    	return JsonStream.serialize(usersService.getUserRewards(getUser(userName)));
+        return nearbyAttractionsDTO;
     }
 
-    // TODO: Get a list of every user's most recent location as JSON
-    //- Note: does not use gpsUtil to query for their current location,
-    //        but rather gathers the user's current location from their stored location history.
-    //
-    // Return object should be the just a JSON mapping of userId to Locations similar to:
-    //     {
-    //        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371}
-    //        ...
-    //     }
+    @RequestMapping("/getRewards")
+    public List<UserReward> getRewards(@RequestParam String userName) {
+        List<UserReward> userRewards = usersService.getUserRewards(getUser(userName));
+        return userRewards;
+    }
+
     @RequestMapping("/getAllCurrentLocations")
     public List<AllCurrentLocationsDTO> getAllCurrentLocations() {
         List<AllCurrentLocationsDTO> allCurrentLocationsDTOS = usersService.getAllUsersLocations();
-    	return allCurrentLocationsDTOS;
+        return allCurrentLocationsDTOS;
     }
-    
+
     @RequestMapping("/getTripDeals")
-    public String getTripDeals(@RequestParam String userName) {
-    	List<Provider> providers = tripDealsService.getTripDeals(getUser(userName));
-    	return JsonStream.serialize(providers);
+    public List<Provider> getTripDeals(@RequestParam String userName) {
+        List<Provider> providers = tripDealsService.getTripDeals(getUser(userName));
+        return providers;
     }
-    
+
     private User getUser(String userName) {
-    	return usersService.getUser(userName);
+        return usersService.getUser(userName);
     }
-   
 
 }
