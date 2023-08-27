@@ -12,6 +12,7 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.dto.NearbyAttractionsDTO;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 
@@ -39,19 +40,40 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
-	public List<Attraction> get5NearestAttractions(List<Attraction> Attractions, Location userLocation) {
+	public List<NearbyAttractionsDTO> get5NearestAttractions(Location userLocation) {
 
-		Map<Double, Attraction> allAttractionWithDistance = new TreeMap<>();
+		List<Attraction> Attractions = gpsUtil.getAttractions();
+
+		Map<Double, Attraction> allAttractionsWithDistance = new TreeMap<>();
 		for (Attraction attraction : Attractions) {
-			allAttractionWithDistance.put(getDistance(attraction, userLocation), attraction);
+			allAttractionsWithDistance.put(getDistance(attraction, userLocation), attraction);
 		}
 
-		ArrayList<Attraction> nearby5Attractions = new ArrayList<Attraction>(allAttractionWithDistance.values());
+		ArrayList<Attraction> nearby5Attractions = new ArrayList<Attraction>(allAttractionsWithDistance.values());
+		ArrayList<Double> distance = new ArrayList<>(allAttractionsWithDistance.keySet());
 		while (nearby5Attractions.size() > 5) {
 			nearby5Attractions.remove(5);
 		}
 
-		return nearby5Attractions;
+		while (distance.size() > 5) {
+			distance.remove(5);
+		}
+
+		List<NearbyAttractionsDTO> nearbyAttractionsDTOS = new ArrayList<NearbyAttractionsDTO>();
+		for (int i=0; i < nearby5Attractions.size(); i++){
+			NearbyAttractionsDTO nearbyAttractionsDTO = new NearbyAttractionsDTO();
+			nearbyAttractionsDTO.setName(nearby5Attractions.get(i).attractionName);
+			nearbyAttractionsDTO.setAttractionLongitude(nearby5Attractions.get(i).longitude);
+			nearbyAttractionsDTO.setAttractionLatitude(nearby5Attractions.get(i).latitude);
+			nearbyAttractionsDTO.setUserLongitude(userLocation.longitude);
+			nearbyAttractionsDTO.setUserLatitude(userLocation.latitude);
+			nearbyAttractionsDTO.setDistance(distance.get(i));
+			nearbyAttractionsDTO.setRewardPoints(1);
+
+			nearbyAttractionsDTOS.add(nearbyAttractionsDTO);
+		}
+
+		return nearbyAttractionsDTOS;
 	}
 	
 	public void calculateRewards(User user) {
