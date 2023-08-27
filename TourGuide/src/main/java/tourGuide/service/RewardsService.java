@@ -2,6 +2,8 @@ package tourGuide.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.dto.NearbyAttractionsDTO;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 
@@ -20,7 +23,7 @@ public class RewardsService {
 	// proximity in miles
     private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
-	private int attractionProximityRange = 200;
+	private int attractionProximityRange = 2000;
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
 	
@@ -37,16 +40,40 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
-	public List<Attraction> get5NearestAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for(Attraction attraction : gpsUtil.getAttractions()) {
+	public List<NearbyAttractionsDTO> get5NearestAttractions(Location userLocation) {
 
-			if(getDistance(attraction, visitedLocation.location) < attractionProximityRange) {
-				nearbyAttractions.add(attraction);
-			}
+		List<Attraction> Attractions = gpsUtil.getAttractions();
+
+		Map<Double, Attraction> allAttractionsWithDistance = new TreeMap<>();
+		for (Attraction attraction : Attractions) {
+			allAttractionsWithDistance.put(getDistance(attraction, userLocation), attraction);
 		}
 
-		return nearbyAttractions;
+		ArrayList<Attraction> nearby5Attractions = new ArrayList<Attraction>(allAttractionsWithDistance.values());
+		ArrayList<Double> distance = new ArrayList<>(allAttractionsWithDistance.keySet());
+		while (nearby5Attractions.size() > 5) {
+			nearby5Attractions.remove(5);
+		}
+
+		while (distance.size() > 5) {
+			distance.remove(5);
+		}
+
+		List<NearbyAttractionsDTO> nearbyAttractionsDTOS = new ArrayList<NearbyAttractionsDTO>();
+		for (int i=0; i < nearby5Attractions.size(); i++){
+			NearbyAttractionsDTO nearbyAttractionsDTO = new NearbyAttractionsDTO();
+			nearbyAttractionsDTO.setName(nearby5Attractions.get(i).attractionName);
+			nearbyAttractionsDTO.setAttractionLongitude(nearby5Attractions.get(i).longitude);
+			nearbyAttractionsDTO.setAttractionLatitude(nearby5Attractions.get(i).latitude);
+			nearbyAttractionsDTO.setUserLongitude(userLocation.longitude);
+			nearbyAttractionsDTO.setUserLatitude(userLocation.latitude);
+			nearbyAttractionsDTO.setDistance(distance.get(i));
+			nearbyAttractionsDTO.setRewardPoints(1);
+
+			nearbyAttractionsDTOS.add(nearbyAttractionsDTO);
+		}
+
+		return nearbyAttractionsDTOS;
 	}
 	
 	public void calculateRewards(User user) {

@@ -20,6 +20,8 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.dto.AllCurrentLocationsDTO;
+import tourGuide.dto.NearbyAttractionsDTO;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -58,6 +60,8 @@ public class UsersService {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
 			user.getLastVisitedLocation() :
 			trackUserLocation(user);
+
+		//TODO: séparer
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
@@ -83,6 +87,21 @@ public class UsersService {
 		//TODO: séparer
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
+	}
+
+	public List<AllCurrentLocationsDTO> getAllUsersLocations() {
+		List<User> users = getAllUsers();
+
+		List<AllCurrentLocationsDTO> allCurrentLocationsDTOS = new ArrayList<AllCurrentLocationsDTO>();
+		for (int i=0; i < users.size(); i++){
+			AllCurrentLocationsDTO allCurrentLocationsDTO = new AllCurrentLocationsDTO();
+			allCurrentLocationsDTO.setUserID(users.get(i).getUserId());
+			allCurrentLocationsDTO.setLocation(users.get(i).getLastVisitedLocation().location);
+
+			allCurrentLocationsDTOS.add(allCurrentLocationsDTO);
+		}
+
+		return allCurrentLocationsDTOS;
 	}
 
 
@@ -121,22 +140,21 @@ public class UsersService {
 			user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
 		});
 	}
-	
+
 	private double generateRandomLongitude() {
-		double leftLimit = -180;
-	    double rightLimit = 180;
-	    return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+		double leftLimit = -128;
+		double rightLimit = -66;
+		return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
 	}
-	
+
 	private double generateRandomLatitude() {
-		double leftLimit = -85.05112878;
-	    double rightLimit = 85.05112878;
-	    return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+		double leftLimit = 24;
+		double rightLimit = 51;
+		return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
 	}
 	
 	private Date getRandomTime() {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-	
 }
