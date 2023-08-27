@@ -1,5 +1,6 @@
 package tourGuide.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -34,6 +35,18 @@ public class RewardsService {
 	
 	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
+	}
+
+	public List<Attraction> get5NearestAttractions(VisitedLocation visitedLocation) {
+		List<Attraction> nearbyAttractions = new ArrayList<>();
+		for(Attraction attraction : gpsUtil.getAttractions()) {
+
+			if(getDistance(attraction, visitedLocation.location) < attractionProximityRange) {
+				nearbyAttractions.add(attraction);
+			}
+		}
+
+		return nearbyAttractions;
 	}
 	
 	public void calculateRewards(User user) {
