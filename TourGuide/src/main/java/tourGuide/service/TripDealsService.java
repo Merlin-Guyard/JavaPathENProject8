@@ -1,11 +1,13 @@
 package tourGuide.service;
 
+import org.springframework.stereotype.Service;
 import tourGuide.user.User;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 
 import java.util.List;
 
+@Service
 public class TripDealsService {
 
     private final TripPricer tripPricer = new TripPricer();

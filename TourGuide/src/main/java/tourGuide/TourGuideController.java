@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
+import tourGuide.service.RewardsService;
+import tourGuide.service.TripDealsService;
 import tourGuide.service.UsersService;
 import tourGuide.user.User;
 import tripPricer.Provider;
@@ -17,9 +19,16 @@ import tripPricer.Provider;
 @RestController
 public class TourGuideController {
 
-	@Autowired
-    UsersService usersService;
-	
+    private final UsersService usersService;
+    private final RewardsService rewardsService;
+    private TripDealsService tripDealsService;
+
+    public TourGuideController(UsersService usersService, RewardsService rewardsService, TripDealsService tripDealsService) {
+        this.usersService = usersService;
+        this.rewardsService = rewardsService;
+        this.tripDealsService = tripDealsService;
+    }
+
     @RequestMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
@@ -43,7 +52,7 @@ public class TourGuideController {
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) {
     	VisitedLocation visitedLocation = usersService.getUserLocation(getUser(userName));
-    	return JsonStream.serialize(usersService.getNearByAttractions(visitedLocation));
+    	return JsonStream.serialize(rewardsService.get5NearestAttractions(visitedLocation));
     }
     
     @RequestMapping("/getRewards") 
@@ -68,7 +77,7 @@ public class TourGuideController {
     
     @RequestMapping("/getTripDeals")
     public String getTripDeals(@RequestParam String userName) {
-    	List<Provider> providers = usersService.getTripDeals(getUser(userName));
+    	List<Provider> providers = tripDealsService.getTripDeals(getUser(userName));
     	return JsonStream.serialize(providers);
     }
     

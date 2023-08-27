@@ -37,12 +37,11 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+	public List<Attraction> get5NearestAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
 		for(Attraction attraction : gpsUtil.getAttractions()) {
 
-			//TODO : séparer
-			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
+			if(getDistance(attraction, visitedLocation.location) < attractionProximityRange) {
 				nearbyAttractions.add(attraction);
 			}
 		}

@@ -46,7 +46,7 @@ public class UsersService {
 			initializeInternalUsers();
 			logger.debug("Finished initializing users");
 		}
-		tracker = new Tracker(this);
+		tracker = new Tracker(this, rewardsService);
 		addShutDownHook();
 	}
 	
@@ -58,6 +58,7 @@ public class UsersService {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
 			user.getLastVisitedLocation() :
 			trackUserLocation(user);
+		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
 	
