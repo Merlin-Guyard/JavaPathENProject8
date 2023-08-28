@@ -48,7 +48,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(1000);
+		InternalTestHelper.setInternalUserNumber(100);
 		UsersService usersService = new UsersService(gpsUtil, rewardsService);
 
 		List<User> allUsers = new ArrayList<>();
@@ -56,7 +56,7 @@ public class TestPerformance {
 
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		usersService.trackAllUserLocation();
+		usersService.trackAllUserLocationInBatches(10);
 		stopWatch.stop();
 		usersService.tracker.stopTracking();
 

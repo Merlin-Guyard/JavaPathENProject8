@@ -89,15 +89,23 @@ public class UsersService {
 		return visitedLocation;
 	}
 
-	public List<VisitedLocation> trackAllUserLocation() {
-		List<VisitedLocation> visitedLocations = new ArrayList<VisitedLocation>();
+	public List<VisitedLocation> trackAllUserLocationInBatches(int batchSize) {
+		List<VisitedLocation> visitedLocations = new ArrayList<>();
 		List<User> users = getAllUsers();
-        for (User user : users) {
-            VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-            user.addToVisitedLocations(visitedLocation);
-            rewardsService.calculateRewards(user);
-            visitedLocations.add(visitedLocation);
-        }
+
+		for (int i = 0; i < users.size(); i += batchSize) {
+			List<User> batchUsers = users.subList(i, Math.min(i + batchSize, users.size()));
+
+			List<VisitedLocation> batchVisitedLocations = new ArrayList<>();
+			for (User user : batchUsers) {
+				VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+				user.addToVisitedLocations(visitedLocation);
+				rewardsService.calculateRewards(user);
+				batchVisitedLocations.add(visitedLocation);
+			}
+
+			visitedLocations.addAll(batchVisitedLocations);
+		}
 
 		return visitedLocations;
 	}
