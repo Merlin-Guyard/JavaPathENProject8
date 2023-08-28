@@ -99,7 +99,7 @@ public class UsersService {
 
         return userLocationFutures .stream()
 				.map(CompletableFuture::join)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	public List<AllCurrentLocationsDTO> getAllUsersLocations() {
