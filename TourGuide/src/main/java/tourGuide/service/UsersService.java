@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -84,9 +85,21 @@ public class UsersService {
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 
-		//TODO: séparer
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
+	}
+
+	public List<VisitedLocation> trackAllUserLocation() {
+		List<VisitedLocation> visitedLocations = new ArrayList<VisitedLocation>();
+		List<User> users = getAllUsers();
+        for (User user : users) {
+            VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+            user.addToVisitedLocations(visitedLocation);
+            rewardsService.calculateRewards(user);
+            visitedLocations.add(visitedLocation);
+        }
+
+		return visitedLocations;
 	}
 
 	public List<AllCurrentLocationsDTO> getAllUsersLocations() {

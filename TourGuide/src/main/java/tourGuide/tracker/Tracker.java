@@ -48,10 +48,9 @@ public class Tracker extends Thread {
 			List<User> users = usersService.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
-			users.forEach(u -> {
-                usersService.trackUserLocation(u);
-				rewardsService.calculateRewards(u);
-            });
+			users.forEach(u ->
+                usersService.trackUserLocation(u)
+            );
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();
