@@ -38,32 +38,27 @@ public class TourGuideController {
 
     @RequestMapping("/getLocation")
     public VisitedLocation getLocation(@RequestParam String userName) {
-        VisitedLocation visitedLocation = usersService.getUserLocation(getUser(userName));
-        return visitedLocation;
+        return usersService.getUserLocation(getUser(userName));
     }
 
     @RequestMapping("/getNearbyAttractions")
     public List<NearbyAttractionsDTO> getNearbyAttractions(@RequestParam String userName) {
-        List<NearbyAttractionsDTO> nearbyAttractionsDTO = rewardsService.get5NearestAttractions(usersService.getUserLocation(usersService.getUser(userName)).location);
-        return nearbyAttractionsDTO;
+        return rewardsService.get5NearestAttractions(usersService.getUserLocation(usersService.getUser(userName)).location);
     }
 
     @RequestMapping("/getRewards")
     public List<UserReward> getRewards(@RequestParam String userName) {
-        List<UserReward> userRewards = usersService.getUserRewards(getUser(userName));
-        return userRewards;
+        return usersService.getUserRewards(getUser(userName));
     }
 
     @RequestMapping("/getAllCurrentLocations")
     public List<AllCurrentLocationsDTO> getAllCurrentLocations() {
-        List<AllCurrentLocationsDTO> allCurrentLocationsDTOS = usersService.getAllUsersLocations();
-        return allCurrentLocationsDTOS;
+        return usersService.getAllUsersLocations();
     }
 
     @RequestMapping("/getTripDeals")
     public List<Provider> getTripDeals(@RequestParam String userName) {
-        List<Provider> providers = tripDealsService.getTripDeals(getUser(userName));
-        return providers;
+        return tripDealsService.getTripDeals(getUser(userName));
     }
 
     private User getUser(String userName) {
