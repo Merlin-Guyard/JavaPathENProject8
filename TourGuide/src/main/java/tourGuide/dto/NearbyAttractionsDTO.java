@@ -10,7 +10,14 @@ public class NearbyAttractionsDTO {
     private double distance;
     private int rewardPoints;
 
-    public NearbyAttractionsDTO() {
+    public NearbyAttractionsDTO(String name, double attractionLongitude, double attractionLatitude, double userLongitude, double userLatitude, double distance, int rewardPoints) {
+        this.name = name;
+        this.attractionLongitude = attractionLongitude;
+        this.attractionLatitude = attractionLatitude;
+        this.userLongitude = userLongitude;
+        this.userLatitude = userLatitude;
+        this.distance = distance;
+        this.rewardPoints = rewardPoints;
     }
 
     public String getName() {

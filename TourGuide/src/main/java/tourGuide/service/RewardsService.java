@@ -40,7 +40,8 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
-	public List<NearbyAttractionsDTO> get5NearestAttractions(Location userLocation) {
+	public List<NearbyAttractionsDTO> get5NearestAttractions(User user) {
+		Location userLocation = user.getLastVisitedLocation().location;
 
 		List<Attraction> Attractions = gpsUtil.getAttractions();
 
@@ -61,14 +62,16 @@ public class RewardsService {
 
 		List<NearbyAttractionsDTO> nearbyAttractionsDTOS = new ArrayList<NearbyAttractionsDTO>();
 		for (int i=0; i < nearby5Attractions.size(); i++){
-			NearbyAttractionsDTO nearbyAttractionsDTO = new NearbyAttractionsDTO();
-			nearbyAttractionsDTO.setName(nearby5Attractions.get(i).attractionName);
-			nearbyAttractionsDTO.setAttractionLongitude(nearby5Attractions.get(i).longitude);
-			nearbyAttractionsDTO.setAttractionLatitude(nearby5Attractions.get(i).latitude);
-			nearbyAttractionsDTO.setUserLongitude(userLocation.longitude);
-			nearbyAttractionsDTO.setUserLatitude(userLocation.latitude);
-			nearbyAttractionsDTO.setDistance(distance.get(i));
-			nearbyAttractionsDTO.setRewardPoints(1);
+
+			NearbyAttractionsDTO nearbyAttractionsDTO = new NearbyAttractionsDTO(
+					nearby5Attractions.get(i).attractionName,
+					nearby5Attractions.get(i).longitude,
+					nearby5Attractions.get(i).latitude,
+					userLocation.longitude,
+					userLocation.latitude,
+					distance.get(i),
+					1
+			);
 
 			nearbyAttractionsDTOS.add(nearbyAttractionsDTO);
 		}
