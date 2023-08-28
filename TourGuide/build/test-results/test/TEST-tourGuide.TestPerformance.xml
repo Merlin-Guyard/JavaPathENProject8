@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="tourGuide.TestPerformance" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-08-28T07:48:44" hostname="DESKTOP-O2TB4MR" time="8.605">
+<testsuite name="tourGuide.TestPerformance" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-08-28T07:56:30" hostname="DESKTOP-O2TB4MR" time="717.5">
   <properties/>
-  <testcase name="highVolumeTrackLocation" classname="tourGuide.TestPerformance" time="8.605"/>
-  <system-out><![CDATA[09:48:44.197 [Test worker] INFO tourGuide.service.UsersService -- TestMode enabled
-highVolumeTrackLocation: Time Elapsed: 8 seconds.
+  <testcase name="highVolumeTrackLocation" classname="tourGuide.TestPerformance" time="717.5"/>
+  <system-out><![CDATA[09:56:31.134 [Test worker] INFO tourGuide.service.UsersService -- TestMode enabled
+highVolumeTrackLocation: Time Elapsed: 716 seconds.
 ]]></system-out>
-  <system-err><![CDATA[Aug 28, 2023 9:48:44 AM org.javamoney.moneta.DefaultMonetaryContextFactory createMonetaryContextNonNullConfig
+  <system-err><![CDATA[Aug 28, 2023 9:56:31 AM org.javamoney.moneta.DefaultMonetaryContextFactory createMonetaryContextNonNullConfig
 INFO: Using custom MathContext: precision=256, roundingMode=HALF_EVEN
 ]]></system-err>
 </testsuite>

@@ -11,24 +11,20 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.concurrent.CompletableFuture;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.AllCurrentLocationsDTO;
-import tourGuide.dto.NearbyAttractionsDTO;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
-import tripPricer.Provider;
-import tripPricer.TripPricer;
 
 @Service
 public class UsersService {
@@ -89,25 +85,21 @@ public class UsersService {
 		return visitedLocation;
 	}
 
-	public List<VisitedLocation> trackAllUserLocationInBatches(int batchSize) {
-		List<VisitedLocation> visitedLocations = new ArrayList<>();
+	public List<VisitedLocation> trackAllUserLocation() {
 		List<User> users = getAllUsers();
 
-		for (int i = 0; i < users.size(); i += batchSize) {
-			List<User> batchUsers = users.subList(i, Math.min(i + batchSize, users.size()));
+		List<CompletableFuture<VisitedLocation>> userLocationFutures  = users.stream()
+				.map(user -> CompletableFuture.supplyAsync(() -> {
+					VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+					user.addToVisitedLocations(visitedLocation);
+					rewardsService.calculateRewards(user);
+					return visitedLocation;
+				}))
+				.toList();
 
-			List<VisitedLocation> batchVisitedLocations = new ArrayList<>();
-			for (User user : batchUsers) {
-				VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-				user.addToVisitedLocations(visitedLocation);
-				rewardsService.calculateRewards(user);
-				batchVisitedLocations.add(visitedLocation);
-			}
-
-			visitedLocations.addAll(batchVisitedLocations);
-		}
-
-		return visitedLocations;
+        return userLocationFutures .stream()
+				.map(CompletableFuture::join)
+				.collect(Collectors.toList());
 	}
 
 	public List<AllCurrentLocationsDTO> getAllUsersLocations() {
