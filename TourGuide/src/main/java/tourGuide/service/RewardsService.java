@@ -70,7 +70,7 @@ public class RewardsService {
 					userLocation.longitude,
 					userLocation.latitude,
 					distance.get(i),
-					1
+					getRewardPoints(nearby5Attractions.get(i), user)
 			);
 
 			nearbyAttractionsDTOS.add(nearbyAttractionsDTO);
