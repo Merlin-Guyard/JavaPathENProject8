@@ -43,7 +43,7 @@ public class TourGuideController {
 
     @RequestMapping("/getNearbyAttractions")
     public List<NearbyAttractionsDTO> getNearbyAttractions(@RequestParam String userName) {
-        return rewardsService.get5NearestAttractions(usersService.getUserLocation(usersService.getUser(userName)).location);
+        return rewardsService.get5NearestAttractions(usersService.getUser(userName));
     }
 
     @RequestMapping("/getRewards")
