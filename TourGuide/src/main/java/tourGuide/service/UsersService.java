@@ -94,7 +94,7 @@ public class UsersService {
 					user.addToVisitedLocations(visitedLocation);
 					rewardsService.calculateRewards(user);
 					return visitedLocation;
-				}))
+				} ))
 				.toList();
 
         return userLocationFutures .stream()

@@ -53,8 +53,7 @@ public class TestPerformance {
         InternalTestHelper.setInternalUserNumber(100);
         UsersService usersService = new UsersService(gpsUtil, rewardsService);
 
-        List<User> allUsers = new ArrayList<>();
-        allUsers = usersService.getAllUsers();
+        List<User> allUsers =  usersService.getAllUsers();
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -79,21 +78,17 @@ public class TestPerformance {
 
         Attraction attraction = gpsUtil.getAttractions().get(0);
         List<User> allUsers = usersService.getAllUsers();
+        allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 
-        List<CompletableFuture<User>> usersFuture = allUsers.stream()
-                .map(user -> CompletableFuture.supplyAsync(() -> {
-                    user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
-                    rewardsService.calculateRewards(user);
-                    return user;
-                }))
-                .toList();
-
-		List<User> usersFuture2list =  usersFuture.stream()
-				.map(CompletableFuture::join)
-				.toList();
+        // je vais créer une liste de tâches je l'englobe dans un completable future
+        // j'execute ma liste de tâche avec join ou get
 
 
-        for (User user : usersFuture2list) {
+        for (User user : allUsers) rewardsService.calculateRewards(user);
+
+
+
+        for (User user : allUsers) {
             assertTrue(!user.getUserRewards().isEmpty());
         }
         stopWatch.stop();
