@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.UUID;
 
 import gpsUtil.location.VisitedLocation;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import tripPricer.Provider;
 
+@Entity
 public class User {
+	@Id
 	private final UUID userId;
 	private final String userName;
 	private String phoneNumber;
